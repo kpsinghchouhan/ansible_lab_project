@@ -1,9 +1,19 @@
 ---
-- name: Configure mgmt servers
-  hosts: mgmt_servers
+- name: Configure management server
+  hosts: mgmt-server
   become: true
 
+  pre_tasks:
+    - name: Update APT cache
+      ansible.builtin.apt:
+        update_cache: true
+      when: ansible_facts['distribution'] == 'Ubuntu'
+
   tasks:
-    - name: Include Pi-Hole role
+    - name: Include PostgreSQL role
       ansible.builtin.include_role:
-        name: kpsinghchouhan.linux_management_roles.pi_hole
+        name: kpsinghchouhan.linux_platform_roles.postgresql
+
+    - name: Include PowerDNS role
+      ansible.builtin.include_role:
+        name: kpsinghchouhan.linux_management_roles.powerdns
